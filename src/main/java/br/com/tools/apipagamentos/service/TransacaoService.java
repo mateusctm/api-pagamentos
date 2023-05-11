@@ -8,6 +8,8 @@ import br.com.tools.apipagamentos.repository.TransacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 @RequiredArgsConstructor
 @Service
@@ -27,5 +29,32 @@ public class TransacaoService {
         transacaoRepository.save(transacao);
 
         return transacaoMapper.converterParaDTO(transacao);
+    }
+
+    public List<TransacaoDTO> getTodasTransacoes() {
+        List<Transacao> transacoes = transacaoRepository.findAll();
+        return transacaoMapper.converterParaListaDTO(transacoes);
+
+    }
+
+    public TransacaoDTO getTransacao(String id) {
+        Optional<Transacao> optionalTransacao = transacaoRepository.findById(id);
+        if (optionalTransacao.isPresent())
+            return transacaoMapper.converterParaDTO(optionalTransacao.get());
+
+        return null;
+    }
+
+    public TransacaoDTO estornarPagamento(String id) {
+        Optional<Transacao> optionalTransacao = transacaoRepository.findById(id);
+        if (optionalTransacao.isPresent()) {
+            Transacao transacao = optionalTransacao.get();
+            transacao.getDescricao().setStatus(StatusTransacao.NEGADO);
+
+            transacaoRepository.save(transacao);
+            return transacaoMapper.converterParaDTO(transacao);
+        }
+
+        return null;
     }
 }

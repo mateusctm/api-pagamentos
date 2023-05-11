@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +27,30 @@ public class PagamentoController {
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(transacaoDTO1);
+    }
+
+    @GetMapping
+    public List<TransacaoDTO> bucarTodasTransacoes(){
+
+        return transacaoService.getTodasTransacoes();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TransacaoDTO> buscarTransacao(@PathVariable String id) {
+        TransacaoDTO transacao = transacaoService.getTransacao(id);
+        if(transacao == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(transacao);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TransacaoDTO> estornarPagamento(@PathVariable String id) {
+        TransacaoDTO transacao = transacaoService.estornarPagamento(id);
+        if(transacao == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(transacao);
     }
 
 }
